@@ -1,0 +1,10 @@
+services:
+
+  upscaler:
+
+    build: .
+
+    volumes:
+      - ./work:/work
+
+    working_dir: /work
