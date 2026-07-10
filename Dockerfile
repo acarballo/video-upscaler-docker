@@ -1,74 +1,35 @@
-# ======================================================
-# Video AI Upscaler
-# CUDA + PyTorch + Real-ESRGAN
-# ======================================================
-
 FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
 
-ENV DEBIAN_FRONTEND=noninteractive
-ENV PYTHONUNBUFFERED=1
+LABEL maintainer="Andres"
+LABEL description="Video AI Upscaler"
 
-#--------------------------------------------------------
-# Dependencias del sistema
-#--------------------------------------------------------
+ARG REAL_ESRGAN_VERSION=v0.2.0
+
+ENV DEBIAN_FRONTEND=noninteractive
+
 RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip \
-    git \
+    ffmpeg \
     wget \
     unzip \
-    ffmpeg \
-    libgl1 \
-    libglib2.0-0 \
-    libsm6 \
-    libxext6 \
-    libxrender1 \
+    curl \
+    git \
+    ca-certificates \
+    libvulkan1 \
+    vulkan-tools \
     && rm -rf /var/lib/apt/lists/*
 
-#--------------------------------------------------------
-# Actualizar pip
-#--------------------------------------------------------
-RUN python3 -m pip install --upgrade pip setuptools wheel
-
-#--------------------------------------------------------
-# PyTorch con CUDA 11.8
-#--------------------------------------------------------
-RUN pip3 install --no-cache-dir \
-    torch \
-    torchvision \
-    torchaudio \
-    --index-url https://download.pytorch.org/whl/cu118
-
-#--------------------------------------------------------
-# Clonar Real-ESRGAN
-#--------------------------------------------------------
 WORKDIR /opt
 
-RUN git clone https://github.com/xinntao/Real-ESRGAN.git
+RUN wget -q \
+https://github.com/xinntao/Real-ESRGAN-ncnn-vulkan/releases/download/${REAL_ESRGAN_VERSION}/realesrgan-ncnn-vulkan-${REAL_ESRGAN_VERSION}-ubuntu.zip \
+-O realesrgan.zip \
+ && unzip realesrgan.zip \
+ && mv realesrgan-ncnn-vulkan-v0.2.0-ubuntu realesrgan \
+ && rm realesrgan.zip
 
-WORKDIR /opt/Real-ESRGAN
+ENV PATH="/opt/realesrgan:$PATH"
 
-#--------------------------------------------------------
-# Dependencias Python
-#--------------------------------------------------------
-RUN pip install --no-cache-dir -r requirements.txt
-
-RUN python3 setup.py develop
-
-#--------------------------------------------------------
-# Descargar modelo x4
-#--------------------------------------------------------
-RUN mkdir -p weights && \
-    wget -O weights/RealESRGAN_x4plus.pth \
-https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth
-
-#--------------------------------------------------------
-# Directorio de trabajo
-#--------------------------------------------------------
 WORKDIR /app
 
-COPY process.sh .
+CMD ["bash"]
 
-RUN chmod +x process.sh
-
-ENTRYPOINT ["/app/process.sh"]
