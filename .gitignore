@@ -7,6 +7,7 @@
 *.vtt
 *.tsv
 *.wav
+*.png
 
 # Python
 __pycache__/
@@ -18,3 +19,6 @@ __pycache__/
 # Windows
 Thumbs.db
 desktop.ini
+
+# temporales
+src/cache/

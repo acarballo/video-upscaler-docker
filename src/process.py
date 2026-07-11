@@ -1,13 +1,17 @@
 import sys
 import json
 
+from workspace import Workspace
 from config import Config
-from detector import VideoDetector
-from ffmpeg import FFmpeg
+from video.detector import VideoDetector
+from video.ffmpeg import FFmpeg
 from ai.factory import UpscalerFactory
+from common.logger import Logger
 
 
 def main():
+
+    logger = Logger.get()
 
     if len(sys.argv) != 2:
         print("Uso:")
@@ -22,13 +26,19 @@ def main():
     )
 
     detector = VideoDetector()
-
     info = detector.analyze(config.input_file)
-
-    # print(json.dumps(info, indent=4))
+    workspace = Workspace(info)
     print(info)
 
     ffmpeg = FFmpeg()
+    frames = ffmpeg.extract_frames(info, workspace.frames)
+    print(frames)
+
+    audio = ffmpeg.extract_audio(
+        info,
+        workspace.audio / "audio.flac"
+    )
+    print(audio)
 
     upscaler = UpscalerFactory.create(config.model)
 

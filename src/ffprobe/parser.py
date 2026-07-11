@@ -1,37 +1,9 @@
-import json
-import subprocess
-
 from model.videoinfo import VideoInfo
 
 
-class VideoDetector:
+class FFProbeParser:
 
-    def analyze(self, filename):
-
-        cmd = [
-            "ffprobe",
-            "-v",
-            "quiet",
-            "-print_format",
-            "json",
-            "-show_streams",
-            "-show_format",
-            filename
-        ]
-
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            check=True
-        )
-
-        data = json.loads(result.stdout)
-
-        return self._parse(filename, data)
-
-
-    def _parse(self, filename, data):
+    def parse(self, filename, data):
 
         video_stream = self._get_video_stream(data)
         audio_stream = self._get_audio_stream(data)
