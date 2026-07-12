@@ -1,57 +1,59 @@
 from pathlib import Path
-from common.logger import Logger
 import subprocess
 
 
 class FFmpeg:
-   
 
-    def extract_audio(self, info, destination):
-
-        logger = Logger.get()
+    def extract_audio(self, source, destination):
 
         destination = Path(destination)
         destination.parent.mkdir(parents=True, exist_ok=True)
-
-        logger.info("Extrayendo audio...")
 
         subprocess.run(
             [
                 "ffmpeg",
                 "-y",
                 "-i",
-                info.filename,
+                str(source),
                 "-vn",
                 "-acodec",
                 "copy",
                 str(destination)
             ],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
             check=True
         )
 
-        return destination
+    def extract_frames(
+            self,
+            source,
+            destination_pattern,
+            max_frames=None):
 
+        destination_pattern = Path(destination_pattern)
+        destination_pattern.parent.mkdir(parents=True, exist_ok=True)
 
-    def extract_frames(self, info, destination):
+        cmd = [
+            "ffmpeg",
+            "-y",
+            "-i",
+            str(source)
+        ]
 
-        logger = Logger.get()
+        if max_frames is not None:
+            cmd.extend([
+                "-frames:v",
+                str(max_frames)
+            ])
 
-        destination = Path(destination)
-        destination.mkdir(parents=True, exist_ok=True)
-
-        output = destination / "frame_%08d.png"
-
-        logger.info("Extrayendo fotogramas...")
+        cmd.append(str(destination_pattern))
 
         subprocess.run(
-            [
-                "ffmpeg",
-                "-y",
-                "-i",
-                info.filename,
-                str(output)
-            ],
+            cmd,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
             check=True
         )
 
-        return destination
+        return sorted(destination_pattern.parent.glob("frame_*.png"))

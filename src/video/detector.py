@@ -2,14 +2,11 @@ import json
 import subprocess
 
 from ffprobe.parser import FFProbeParser
-from common.logger import Logger
 
 
 class VideoDetector:
 
     def analyze(self, filename):
-
-        logger = Logger.get()
 
         cmd = [
             "ffprobe",
@@ -21,8 +18,6 @@ class VideoDetector:
             "-show_format",
             filename
         ]
-
-        logger.info("Analizando vídeo...")
 
         result = subprocess.run(
             cmd,

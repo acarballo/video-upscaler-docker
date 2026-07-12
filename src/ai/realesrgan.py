@@ -1,10 +1,28 @@
-from ai.base import BaseUpscaler
+import subprocess
+from pathlib import Path
+
+from ai.base import Upscaler
 
 
-class RealESRGANUpscaler(BaseUpscaler):
+class RealESRGAN(Upscaler):
 
     def load(self):
         print("RealESRGAN cargado")
 
-    def upscale(self, input_dir, output_dir):
-        print("Aquí irá RealESRGAN")
+    def upscale_image(self, source: Path, destination: Path):
+
+        subprocess.run(
+            [
+                "realesrgan-ncnn-vulkan",
+
+                "-i",
+                str(source),
+
+                "-o",
+                str(destination),
+
+                "-n",
+                "realesrgan-x4plus"
+            ],
+            check=True
+        )

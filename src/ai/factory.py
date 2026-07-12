@@ -1,5 +1,6 @@
-from ai.realesrgan import RealESRGANUpscaler
-from ai.basicvsr import BasicVSRUpscaler
+from ai.realesrgan import RealESRGAN
+from ai.aurasr import AuraSRUpscaler
+# from ai.basicvsr import BasicVSR
 
 
 class UpscalerFactory:
@@ -8,9 +9,12 @@ class UpscalerFactory:
     def create(name):
 
         if name == "realesrgan":
-            return RealESRGANUpscaler()
+            return RealESRGAN()
 
-        if name == "basicvsr":
-            return BasicVSRUpscaler()
+        if name == "aurasr":
+            return AuraSRUpscaler()
+
+        # if name == "basicvsr":
+        #     return BasicVSR()
 
         raise Exception(f"Modelo desconocido: {name}")

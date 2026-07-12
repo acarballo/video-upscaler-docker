@@ -49,6 +49,8 @@ RUN pip install \
     imageio-ffmpeg \
     scipy
 
+RUN pip install aura-sr
+
 WORKDIR /app
 
 # COPY test_gpu.py .

@@ -15,7 +15,7 @@ class Config:
 
     scale: int = 4
 
-    model: str = "realesrgan"
+    model: str = "aurasr"
 
     codec: str = "hevc"
 

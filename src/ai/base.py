@@ -1,12 +1,13 @@
 from abc import ABC, abstractmethod
+from pathlib import Path
 
 
-class BaseUpscaler(ABC):
+class Upscaler(ABC):
 
     @abstractmethod
     def load(self):
         pass
 
     @abstractmethod
-    def upscale(self, input_dir, output_dir):
+    def upscale_image(self, source: Path, destination: Path):
         pass
