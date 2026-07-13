@@ -32,13 +32,17 @@ class Workspace:
         return self.audio / "audio.mp3"
 
     @property
-    def output_video(self):
-        return self.output / "salida.mkv"
-
-    @property
     def frame_pattern(self):
         return self.frames / "frame_%08d.png"
 
     @property
     def upscaled_pattern(self):
         return self.upscaled / "frame_%08d.png"
+
+    @property
+    def encoded_video(self):
+        return self.encode / "video.mp4"
+
+    @property
+    def output_video(self):
+        return self.output / "salida.mkv"

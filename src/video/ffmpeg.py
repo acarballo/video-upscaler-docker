@@ -57,3 +57,23 @@ class FFmpeg:
         )
 
         return sorted(destination_pattern.parent.glob("frame_*.png"))
+
+    def encode_video(self, input_pattern, output_file, fps):
+
+        subprocess.run(
+            [
+                "ffmpeg",
+                "-y",
+
+                "-framerate", str(fps),
+
+                "-i", str(input_pattern),
+
+                "-c:v", "libx264",
+
+                "-pix_fmt", "yuv420p",
+
+                str(output_file)
+            ],
+            check=True
+        )
