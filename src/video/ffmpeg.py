@@ -1,5 +1,6 @@
 from pathlib import Path
 import subprocess
+import re
 
 
 class FFmpeg:
@@ -29,14 +30,22 @@ class FFmpeg:
             self,
             source,
             destination_pattern,
-            max_frames=None):
+            max_frames=None,
+            progress=None):
 
         destination_pattern = Path(destination_pattern)
         destination_pattern.parent.mkdir(parents=True, exist_ok=True)
 
         cmd = [
             "ffmpeg",
+
+            "-progress",
+            "pipe:1",
+
+            "-nostats",
+
             "-y",
+
             "-i",
             str(source)
         ]
@@ -49,31 +58,119 @@ class FFmpeg:
 
         cmd.append(str(destination_pattern))
 
-        subprocess.run(
+        self.run_with_progress(
             cmd,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            check=True
+            progress
         )
 
         return sorted(destination_pattern.parent.glob("frame_*.png"))
 
-    def encode_video(self, input_pattern, output_file, fps):
+    def encode_video(                
+            self,
+            input_pattern,
+            output_file,
+            video_info,
+            config):
+
+        encoder = self._get_encoder(config.codec)
 
         subprocess.run(
             [
                 "ffmpeg",
                 "-y",
 
-                "-framerate", str(fps),
+                "-framerate",
+                str(video_info.fps),
 
-                "-i", str(input_pattern),
+                "-i",
+                str(input_pattern),
 
-                "-c:v", "libx264",
+                "-c:v",
+                encoder,
 
-                "-pix_fmt", "yuv420p",
+                "-preset",
+                config.preset,
+
+                "-crf",
+                str(config.crf),
+
+                "-pix_fmt",
+                "yuv420p",
 
                 str(output_file)
             ],
             check=True
         )
+
+
+    def _get_encoder(self, codec: str):
+
+        match codec:
+
+            case "h264":
+                return "libx264"
+
+            case "hevc":
+                return "libx265"
+
+            case _:
+                raise ValueError(
+                    f"Códec no soportado: {config.codec}"
+                )
+
+    def merge_audio(
+            self,
+            video,
+            audio,
+            output):
+
+        subprocess.run(
+            [
+                "ffmpeg",
+                "-y",
+
+                "-i", str(video),
+
+                "-i", str(audio),
+
+                "-c:v", "copy",
+
+                "-c:a", "copy",
+
+                "-shortest",
+
+                str(output)
+
+            ],
+            check=True
+        )
+
+    def run_with_progress(self, command, progress=None):
+
+        process = subprocess.Popen(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1
+        )
+
+        for line in process.stdout:
+
+            line = line.strip()
+
+            if progress and line.startswith("frame="):
+
+                try:
+                    frame = int(line.split("=")[1])
+                    progress.update(frame)
+                except ValueError:
+                    pass
+
+        process.wait()
+
+        if process.returncode != 0:
+            raise subprocess.CalledProcessError(
+                process.returncode,
+                command
+            )

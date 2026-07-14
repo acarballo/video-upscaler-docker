@@ -23,6 +23,8 @@ class PipelineContext:
 
     audio_file: Path | None = None
 
+    encoded_video: Path | None = None
+
     output_video: Path | None = None
 
     upscaler = None    

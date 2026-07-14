@@ -26,3 +26,5 @@ class Config:
     tile_size: int = 512
 
     batch_size: int = 500
+    
+    max_frames: int | None = None

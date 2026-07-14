@@ -16,7 +16,8 @@ def main():
 
     config = Config(
         input_file=sys.argv[1],
-        output_file="salida.mkv"
+        output_file="salida.mkv",
+        max_frames=15
     )
 
     Pipeline(config).run()

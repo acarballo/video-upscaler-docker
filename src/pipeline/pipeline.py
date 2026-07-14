@@ -4,7 +4,8 @@ from pipeline.stages.analyze import AnalyzeStage
 from pipeline.stages.extract_audio import ExtractAudioStage
 from pipeline.stages.extract_frames import ExtractFramesStage
 from pipeline.stages.upscale import UpscaleStage
-from pipeline.stages.encode import EncodeStage
+from pipeline.stages.encode_video import EncodeVideoStage
+from pipeline.stages.merge_audio import MergeAudioStage
 
 
 class Pipeline:
@@ -23,7 +24,9 @@ class Pipeline:
 
             UpscaleStage(config.model),
 
-            EncodeStage()
+            EncodeVideoStage(),
+
+            MergeAudioStage()
 
         ]
 

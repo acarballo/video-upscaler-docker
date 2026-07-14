@@ -3,7 +3,7 @@ from pipeline.stages.base import Stage
 from video.ffmpeg import FFmpeg
 
 
-class EncodeStage(Stage):
+class EncodeVideoStage(Stage):
 
     def __init__(self):
 
@@ -14,17 +14,14 @@ class EncodeStage(Stage):
         context.progress.step("Codificando vídeo...")
 
         self.ffmpeg.encode_video(
-
             context.workspace.upscaled_pattern,
-
             context.workspace.encoded_video,
-
-            context.video_info.fps
-
+            context.video_info,
+            context.config
         )
 
-        context.output_video = context.workspace.encoded_video
+        context.encoded_video = context.workspace.encoded_video
 
         context.progress.info(
-            f"Vídeo generado: {context.output_video}"
+            f"Vídeo generado: {context.encoded_video}"
         )

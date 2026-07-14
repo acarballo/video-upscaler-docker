@@ -26,10 +26,9 @@ class UpscaleStage(Stage):
                 context.workspace.upscaled / frame.name
             ))
 
-        context.progress.step(
-            f"Reescalando {len(images)} fotograma(s)..."
+        self.upscaler.upscale_images(
+            context,
+            images
         )
-
-        self.upscaler.upscale_images(images)
 
         context.progress.info("Reescalado finalizado.")

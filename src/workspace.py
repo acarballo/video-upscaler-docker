@@ -45,4 +45,4 @@ class Workspace:
 
     @property
     def output_video(self):
-        return self.output / "salida.mkv"
+        return self.output / "salida.mkv"        
