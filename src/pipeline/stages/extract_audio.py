@@ -10,15 +10,26 @@ class ExtractAudioStage(Stage):
 
     def run(self, context):
 
-        context.progress.step("Extrayendo audio...")
+        context.progress.step("Extrayendo audios...")
 
-        self.ffmpeg.extract_audio(
-            context.workspace.input_video,
-            context.workspace.audio_file
-        )
+        context.audio_files = []
 
-        context.audio_file = context.workspace.audio_file
+        sources = [
+            context.config.input_file,
+            *context.config.additional_audio_sources
+        ]
 
-        context.progress.info(
-            f"Audio extraído: {context.audio_file}"
-        )
+        for index, source in enumerate(sources, start=1):
+
+            destination = context.workspace.audio_track(index)
+
+            self.ffmpeg.extract_audio(
+                source,
+                destination
+            )
+
+            context.audio_files.append(destination)
+
+            context.progress.info(
+                f"Audio {index} extraído: {destination}"
+            )

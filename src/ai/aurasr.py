@@ -21,6 +21,7 @@ class AuraSRUpscaler(Upscaler):
         image = Image.open(source)
 
         result = self.model.upscale_4x(image)
+        # result = self.model.upscale_4x_overlapped(image)
 
         destination.parent.mkdir(parents=True, exist_ok=True)
 

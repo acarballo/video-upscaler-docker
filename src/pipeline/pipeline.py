@@ -20,9 +20,9 @@ class Pipeline:
 
             ExtractAudioStage(),
 
-            ExtractFramesStage(),
+            # ExtractFramesStage(),
 
-            UpscaleStage(config.model),
+            # UpscaleStage(config.model),
 
             EncodeVideoStage(),
 

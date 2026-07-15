@@ -121,27 +121,65 @@ class FFmpeg:
     def merge_audio(
             self,
             video,
-            audio,
+            audios,
             output):
 
+        cmd = [
+
+            "ffmpeg",
+
+            "-y",
+
+            "-i",
+            str(video)
+
+        ]
+
+        # Añadir todas las pistas de audio
+        for audio in audios:
+
+            cmd.extend([
+
+                "-i",
+                str(audio)
+
+            ])
+
+        # Seleccionar el vídeo
+        cmd.extend([
+
+            "-map",
+            "0:v"
+
+        ])
+
+        # Seleccionar todas las pistas de audio
+        for i in range(len(audios)):
+
+            cmd.extend([
+
+                "-map",
+                f"{i + 1}:a"
+
+            ])
+
+        # Copiar sin recodificar
+        cmd.extend([
+
+            "-c:v",
+            "copy",
+
+            "-c:a",
+            "copy",
+
+            "-shortest",
+
+            str(output)
+
+        ])
+
         subprocess.run(
-            [
-                "ffmpeg",
-                "-y",
-
-                "-i", str(video),
-
-                "-i", str(audio),
-
-                "-c:v", "copy",
-
-                "-c:a", "copy",
-
-                "-shortest",
-
-                str(output)
-
-            ],
+            cmd,
             check=True
         )
 

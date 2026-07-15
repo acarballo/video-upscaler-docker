@@ -17,7 +17,7 @@ class MergeAudioStage(Stage):
 
             context.encoded_video,
 
-            context.audio_file,
+            context.audio_files,
 
             context.workspace.output_video
 

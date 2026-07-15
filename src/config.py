@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 
@@ -28,3 +28,5 @@ class Config:
     batch_size: int = 500
     
     max_frames: int | None = None
+
+    additional_audio_sources: list[Path] = field(default_factory=list)

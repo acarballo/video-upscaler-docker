@@ -10,14 +10,17 @@ def main():
 
     logger = Logger.get()
 
-    if len(sys.argv) != 2:
-        logger.error("Uso: python process.py <video>")
+    if len(sys.argv) < 2:
+        logger.error(
+            "Uso: python process.py <video> [audio1] [audio2] ..."
+        )
         sys.exit(1)
 
     config = Config(
         input_file=sys.argv[1],
+        additional_audio_sources=sys.argv[2:],
         output_file="salida.mkv",
-        max_frames=15
+        max_frames=100
     )
 
     Pipeline(config).run()

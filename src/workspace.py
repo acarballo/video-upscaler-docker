@@ -31,6 +31,9 @@ class Workspace:
     def audio_file(self):
         return self.audio / "audio.mp3"
 
+    def audio_track(self, index):
+        return self.audio / f"audio_{index:02d}.mp3"
+
     @property
     def frame_pattern(self):
         return self.frames / "frame_%08d.png"
