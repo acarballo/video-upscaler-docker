@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from tqdm import tqdm
+
 
 class Upscaler(ABC):
 
@@ -12,11 +12,23 @@ class Upscaler(ABC):
     def upscale_image(self, source: Path, destination: Path):
         pass
 
-    def upscale_images(self, images):
+    def upscale_images(
+        self,
+        frames,
+        destination_dir,
+        progress=None
+    ):
 
-        for source, destination in tqdm(images, desc="Upscaling"):
+        total = len(frames)
+
+        for index, source in enumerate(frames, start=1):
+
+            destination = destination_dir / source.name
 
             self.upscale_image(
                 source,
                 destination
             )
+
+            if progress:
+                progress.update(index)

@@ -2,9 +2,7 @@ from pipeline.context import PipelineContext
 
 from pipeline.stages.analyze import AnalyzeStage
 from pipeline.stages.extract_audio import ExtractAudioStage
-from pipeline.stages.extract_frames import ExtractFramesStage
-from pipeline.stages.upscale import UpscaleStage
-from pipeline.stages.encode_video import EncodeVideoStage
+from pipeline.stages.process_blocks import ProcessBlocksStage
 from pipeline.stages.merge_audio import MergeAudioStage
 
 
@@ -20,11 +18,7 @@ class Pipeline:
 
             ExtractAudioStage(),
 
-            # ExtractFramesStage(),
-
-            # UpscaleStage(config.model),
-
-            EncodeVideoStage(),
+            ProcessBlocksStage(config.model),
 
             MergeAudioStage()
 
