@@ -30,8 +30,11 @@ class FFmpeg:
             self,
             source,
             destination_pattern,
-            max_frames=None,
-            progress=None):
+            start_frame=0,
+            frame_count=None,
+            fps=25,
+            progress=None
+        ):
 
         destination_pattern = Path(destination_pattern)
         destination_pattern.parent.mkdir(parents=True, exist_ok=True)
@@ -39,21 +42,22 @@ class FFmpeg:
         cmd = [
             "ffmpeg",
 
-            "-progress",
-            "pipe:1",
-
+            "-progress", "pipe:1",
             "-nostats",
-
             "-y",
 
-            "-i",
-            str(source)
+            "-i", str(source),
+
+            "-ss", str(start_frame / fps),
+
+            "-start_number", "1"
         ]
 
-        if max_frames is not None:
+        if frame_count is not None:
+
             cmd.extend([
                 "-frames:v",
-                str(max_frames)
+                str(frame_count)
             ])
 
         cmd.append(str(destination_pattern))
@@ -117,6 +121,51 @@ class FFmpeg:
                 raise ValueError(
                     f"Códec no soportado: {config.codec}"
                 )
+
+    def concatenate_videos(
+            self,
+            videos,
+            concat_file,
+            output):
+
+        concat_file = Path(concat_file)
+
+        concat_file.parent.mkdir(
+            parents=True,
+            exist_ok=True
+        )
+
+        with open(concat_file, "w", encoding="utf8") as f:
+
+            for video in videos:
+
+                f.write(
+                    f"file '{video.resolve()}'\n"
+                )
+
+        subprocess.run(
+
+            [
+
+                "ffmpeg",
+
+                "-y",
+
+                "-f", "concat",
+
+                "-safe", "0",
+
+                "-i", str(concat_file),
+
+                "-c", "copy",
+
+                str(output)
+
+            ],
+
+            check=True
+
+        )
 
     def merge_audio(
             self,

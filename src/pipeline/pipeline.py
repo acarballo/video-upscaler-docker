@@ -4,6 +4,7 @@ from pipeline.stages.analyze import AnalyzeStage
 from pipeline.stages.extract_audio import ExtractAudioStage
 from pipeline.stages.process_blocks import ProcessBlocksStage
 from pipeline.stages.merge_audio import MergeAudioStage
+from pipeline.stages.concatenate_blocks import ConcatenateBlocksStage
 
 
 class Pipeline:
@@ -18,10 +19,11 @@ class Pipeline:
 
             ExtractAudioStage(),
 
-            ProcessBlocksStage(config.model),
+            ProcessBlocksStage(),
+
+            ConcatenateBlocksStage(),
 
             MergeAudioStage()
-
         ]
 
     def run(self):

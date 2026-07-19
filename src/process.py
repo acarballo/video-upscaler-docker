@@ -1,8 +1,7 @@
-import sys
+import argparse
 
 from config import Config
 from common.logger import Logger
-
 from pipeline.pipeline import Pipeline
 
 
@@ -10,17 +9,33 @@ def main():
 
     logger = Logger.get()
 
-    if len(sys.argv) < 2:
-        logger.error(
-            "Uso: python process.py <video> [audio1] [audio2] ..."
-        )
-        sys.exit(1)
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("input_video")
+    parser.add_argument("audio", nargs="*")
+
+    parser.add_argument(
+        "--from-block",
+        type=int,
+        default=0,
+        help="Bloque desde el que comenzar el procesamiento."
+    )
+
+    parser.add_argument(
+        "--block-count",
+        type=int,
+        help="Número máximo de bloques a procesar."
+    )
+
+    args = parser.parse_args()
 
     config = Config(
-        input_file=sys.argv[1],
-        additional_audio_sources=sys.argv[2:],
+        input_file=args.input_video,
         output_file="salida.mkv",
-        max_frames=100
+        additional_audio_sources=args.audio,
+
+        from_block=args.from_block,
+        block_count=args.block_count
     )
 
     Pipeline(config).run()

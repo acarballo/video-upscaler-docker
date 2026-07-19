@@ -10,6 +10,7 @@ class VideoInfo:
     width: int
     height: int
     fps: float
+    total_frames: int
     codec: str
     pixel_format: str
 

@@ -8,18 +8,38 @@ class FFProbeParser:
         video_stream = self._get_video_stream(data)
         audio_stream = self._get_audio_stream(data)
 
+        fps = self._calculate_fps(video_stream)
+
+        duration = float(data["format"]["duration"])
+
+        # Si ffprobe proporciona el número exacto de frames lo usamos.
+        # Si no, lo calculamos a partir de la duración y los FPS.
+        total_frames = video_stream.get("nb_frames")
+
+        if total_frames is not None:
+            total_frames = int(total_frames)
+        else:
+            total_frames = round(duration * fps)
+
         return VideoInfo(
             filename=filename,
+
+            # Vídeo
             width=int(video_stream["width"]),
             height=int(video_stream["height"]),
-            fps=self._calculate_fps(video_stream),
+            fps=fps,
+            total_frames=total_frames,
             codec=video_stream["codec_name"],
             pixel_format=video_stream.get("pix_fmt", ""),
+
+            # Audio
             has_audio=audio_stream is not None,
             audio_codec=audio_stream.get("codec_name") if audio_stream else None,
             audio_channels=audio_stream.get("channels") if audio_stream else None,
             sample_rate=int(audio_stream.get("sample_rate")) if audio_stream else None,
-            duration=float(data["format"]["duration"]),
+
+            # General
+            duration=duration,
             bitrate=int(data["format"]["bit_rate"])
         )
 
@@ -30,7 +50,7 @@ class FFProbeParser:
             if stream["codec_type"] == "video":
                 return stream
 
-        raise RuntimeError("No se encontró ningún stream de vídeo")        
+        raise RuntimeError("No se encontró ningún stream de vídeo")
 
     def _get_audio_stream(self, data):
 
@@ -53,4 +73,4 @@ class FFProbeParser:
         if denominador == 0:
             return 0.0
 
-        return numerador / denominador        
+        return numerador / denominador

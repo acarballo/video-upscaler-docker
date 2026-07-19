@@ -5,6 +5,8 @@ from config import Config
 from common.progress import Progress
 
 from model.videoinfo import VideoInfo
+from model.videoblock import VideoBlock
+
 from workspace import Workspace
 
 
@@ -22,6 +24,8 @@ class PipelineContext:
     frames: list[Path] = field(default_factory=list)
 
     audio_file: Path | None = None
+
+    blocks: list[VideoBlock] = field(default_factory=list)
 
     encoded_video: Path | None = None
 
