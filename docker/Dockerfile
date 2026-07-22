@@ -47,7 +47,11 @@ RUN pip install \
     einops \
     imageio \
     imageio-ffmpeg \
-    scipy
+    scipy \
+    basicsr \
+    facexlib \
+    gfpgan \
+    realesrgan
 
 RUN pip install aura-sr
 

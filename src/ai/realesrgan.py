@@ -1,28 +1,44 @@
-import subprocess
 from pathlib import Path
+
+from PIL import Image
 
 from ai.base import Upscaler
 
+from realesrgan import RealESRGAN
+import torch
 
-class RealESRGAN(Upscaler):
+
+class RealESRGANUpscaler(Upscaler):
+
+    def __init__(self):
+
+        self.model = None
 
     def load(self):
-        print("RealESRGAN cargado")
+
+        if self.model is not None:
+            return
+
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+
+        self.model = RealESRGAN(
+            device,
+            scale=4
+        )
+
+        self.model.load_weights(
+            "weights/RealESRGAN_x4.pth"
+        )
 
     def upscale_image(self, source: Path, destination: Path):
 
-        subprocess.run(
-            [
-                "realesrgan-ncnn-vulkan",
+        image = Image.open(source).convert("RGB")
 
-                "-i",
-                str(source),
+        result = self.model.predict(image)
 
-                "-o",
-                str(destination),
-
-                "-n",
-                "realesrgan-x4plus"
-            ],
-            check=True
+        destination.parent.mkdir(
+            parents=True,
+            exist_ok=True
         )
+
+        result.save(destination)

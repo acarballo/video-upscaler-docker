@@ -15,7 +15,8 @@ class Config:
 
     # Escalado
     scale: int = 4
-    model: str = "aurasr"
+    # model: str = "aurasr"
+    model: str = "realesrgan"
 
     # Codificación
     codec: str = "hevc"
@@ -24,7 +25,8 @@ class Config:
 
     # IA
     tile_size: int = 512
-    batch_size: int = 500
+    # batch_size: int = 500
+    batch_size: int = 10
 
     # Procesamiento por bloques
     block_size: int = 500

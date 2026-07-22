@@ -1,4 +1,4 @@
-from ai.realesrgan import RealESRGAN
+from ai.realesrgan import RealESRGANUpscaler
 from ai.aurasr import AuraSRUpscaler
 # from ai.basicvsr import BasicVSR
 
@@ -9,7 +9,7 @@ class UpscalerFactory:
     def create(name):
 
         if name == "realesrgan":
-            return RealESRGAN()
+            return RealESRGANUpscaler()
 
         if name == "aurasr":
             return AuraSRUpscaler()
